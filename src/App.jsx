@@ -10,17 +10,34 @@ function App() {
     "E", "B", "G", "D", "A", "E"
   ]
 
+  const fretStyleBase = "z-0 w-12 border-solid"
+
+  const fretStyle = `
+    ${fretStyleBase}
+    bg-[#E8D4A2]
+    border-r-4 border-r-[#D4D4D4]
+    border-l-4 border-l-[#C0C0C0]
+  `
+  const openStyle = `
+    ${fretStyleBase}
+    bg-[#FFF8DC]
+    border-r-4 border-r-[#FFF8DC]
+  `
+
   const frets = Array.from({length: 13}, (_, i) =>
-    <div key={`fr-${i}`} className="z-0
-      w-12 bg-[#E8D4A2] border-solid
-      border-r-4 border-r-[#D4D4D4]
-      border-l-4 border-l-[#C0C0C0]
-      ">
+    <div key={`fr-${i}`}
+      className={i > 0 ? fretStyle : openStyle}
+    >
     </div>
   );
 
+  const onFretClick = (fret_id) => {
+    console.log(`clicked ${fret_id}`)
+  }
+
   const fretButtons = Array.from({length: 13}, (_, i) =>
     <button key={`frb-${i}`}
+      onClick={() => onFretClick(i)}
       className="h-full w-12">
     </button>
   );
@@ -36,7 +53,7 @@ function App() {
       <div key={`fb-${i}`} className="relative flex">
         {/* string element */}
         <div key={`stc-${i}`} className="
-          absolute inset-0 z-10
+          absolute inset-0 z-10 left-12
           flex items-center justify-center
         ">
           <div key={`st-${i}`} className="h-1 w-full bg-[#A8A9AD]">
