@@ -6,9 +6,15 @@ function App() {
   // 1 as open "fret" + actual number of frets
   const nFrets = 1 + 12;
   
-  const notes = [
-    "A", "B", "C", "D", "E", "F", "G",
-  ]
+  const notesSharp = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+  // const notesFlat = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab']
+
+  const tunings = {
+    "standard": ["E", "B", "G", "D", "A", "E"],
+  }
+
+  const tuningCurrent = "standard"
+  
   const fretStyleBase = "z-0 w-12 border-solid"
 
   const fretStyle = `
@@ -34,6 +40,10 @@ function App() {
     console.log(`clicked ${fret_id}`)
   }
 
+  const getNote = (index, openNote) => {
+    return notesSharp.at((notesSharp.indexOf(openNote) + index) % 12)
+  }
+
   const FretNotes = ({openNote}) => (
     Array.from({length: nFrets}, (_, i) =>
     <button key={`frb-${i}`}
@@ -43,12 +53,12 @@ function App() {
       bg-red-300
       rounded-2xl
       ">
-      {openNote}
+      {i === 0 ? openNote : getNote(i, openNote)}
       </div>
     </button>
   ));
 
-  const cuerdas = Array.from({length: nStrings }, (_, i) => 
+  const cuerdas = tunings[tuningCurrent].map((note, i) =>
     // top level container
     <div key={i} className="flex h-6">
       {/* fretboad container */}
@@ -65,7 +75,7 @@ function App() {
         </div>
         {frets}
         <div className="h-full absolute z-20 flex">
-          <FretNotes openNote="A"/>
+          <FretNotes openNote={note}/>
         </div>
       </div>
     </div>
