@@ -11,7 +11,7 @@ function App() {
   ]
 
   const frets = Array.from({length: 13}, (_, i) =>
-    <div className="z-0
+    <div key={`fr-${i}`} className="z-0
       w-12 bg-[#E8D4A2] border-solid
       border-r-4 border-r-[#D4D4D4]
       border-l-4 border-l-[#C0C0C0]
@@ -19,19 +19,33 @@ function App() {
     </div>
   );
 
-  const cuerdas = openNotes.map(note => 
-    <div className="flex">
-      <div className="w-6">
+  const fretButtons = Array.from({length: 13}, (_, i) =>
+    <button key={`frb-${i}`}
+      className="h-full w-12">
+    </button>
+  );
+
+  const cuerdas = openNotes.map((note, i) => 
+    // top level container
+    <div key={i} className="flex">
+      {/* open note names */}
+      <div key={note+i} className="w-6">
         {note}
       </div>
-      <div className="relative flex">
-        <div className="
+      {/* fretboad container */}
+      <div key={`fb-${i}`} className="relative flex">
+        {/* string element */}
+        <div key={`stc-${i}`} className="
           absolute inset-0 z-10
           flex items-center justify-center
-          ">
-          <div className="h-1 w-full bg-[#A8A9AD]"></div>
+        ">
+          <div key={`st-${i}`} className="h-1 w-full bg-[#A8A9AD]">
+          </div>
         </div>
         {frets}
+        <div className="h-full absolute z-20 flex">
+          {fretButtons}
+        </div>
       </div>
     </div>
    );
