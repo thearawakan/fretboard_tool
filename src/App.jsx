@@ -3,15 +3,12 @@ import { useState } from 'react'
 function App() {
 
   const nStrings = 6;
+  // 1 as open "fret" + actual number of frets
+  const nFrets = 1 + 12;
   
   const notes = [
     "A", "B", "C", "D", "E", "F", "G",
   ]
-
-  const openNotes = [
-    "E", "B", "G", "D", "A", "E"
-  ]
-
   const fretStyleBase = "z-0 w-12 border-solid"
 
   const fretStyle = `
@@ -26,7 +23,7 @@ function App() {
     border-r-4 border-r-[#FFF8DC]
   `
 
-  const frets = Array.from({length: 13}, (_, i) =>
+  const frets = Array.from({length: nFrets}, (_, i) =>
     <div key={`fr-${i}`}
       className={i > 0 ? fretStyle : openStyle}
     >
@@ -37,7 +34,7 @@ function App() {
     console.log(`clicked ${fret_id}`)
   }
 
-  const fretButtons = Array.from({length: 13}, (_, i) =>
+  const fretButtons = Array.from({length: nFrets}, (_, i) =>
     <button key={`frb-${i}`}
       onClick={() => onFretClick(i)}
       className="h-full w-12 flex justify-center">
