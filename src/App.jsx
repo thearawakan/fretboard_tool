@@ -2,6 +2,8 @@ import { useState } from 'react'
 
 function App() {
 
+  const [clickedIndex, setClickedIndex] = useState(null);
+
   const nStrings = 6;
   // 1 as open "fret" + actual number of frets
   const nFrets = 1 + 12;
@@ -36,27 +38,28 @@ function App() {
     </div>
   );
 
-  const onFretClick = (fret_id) => {
-    console.log(`clicked ${fret_id}`)
-  }
-
   const getNote = (index, openNote) => {
     return notesSharp.at((notesSharp.indexOf(openNote) + index) % 12)
   }
 
-  const FretNotes = ({openNote}) => (
-    Array.from({length: nFrets}, (_, i) =>
-    <button key={`frb-${i}`}
-      onClick={() => onFretClick(i)}
+  const noteStyleInv = "invisible h-4/4 w-6 bg-red-300 rounded-2xl"
+  const noteStyle = "h-4/4 w-6 bg-red-300 rounded-2xl"
+
+  const FretNotes = ({openNote}) => {
+    return (
+      Array.from({length: nFrets}, (_, i) =>
+        <Note key={i} note={i === 0 ? openNote : getNote(i, openNote)}/>
+  ))};
+
+  const Note = ({index, note}) => (
+    <button key={`frb-${note}-${index}`}
+      onClick={() => setClickedIndex(note)}
       className="h-full w-12 flex justify-center">
-      <div className="h-4/4 w-6
-      bg-red-300
-      rounded-2xl
-      ">
-      {i === 0 ? openNote : getNote(i, openNote)}
+      <div className={note === clickedIndex ? noteStyle : noteStyleInv}>
+      {note}
       </div>
     </button>
-  ));
+  );
 
   const cuerdas = tunings[tuningCurrent].map((note, i) =>
     // top level container
