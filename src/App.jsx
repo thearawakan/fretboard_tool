@@ -34,7 +34,8 @@ function App() {
     console.log(`clicked ${fret_id}`)
   }
 
-  const fretButtons = Array.from({length: nFrets}, (_, i) =>
+  const FretNotes = ({openNote}) => (
+    Array.from({length: nFrets}, (_, i) =>
     <button key={`frb-${i}`}
       onClick={() => onFretClick(i)}
       className="h-full w-12 flex justify-center">
@@ -42,9 +43,10 @@ function App() {
       bg-red-300
       rounded-2xl
       ">
+      {openNote}
       </div>
     </button>
-  );
+  ));
 
   const cuerdas = Array.from({length: nStrings }, (_, i) => 
     // top level container
@@ -63,7 +65,7 @@ function App() {
         </div>
         {frets}
         <div className="h-full absolute z-20 flex">
-          {fretButtons}
+          <FretNotes openNote="A"/>
         </div>
       </div>
     </div>
