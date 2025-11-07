@@ -1,9 +1,14 @@
 import { useState } from 'react'
+import Note from './Note'
 
 export default function Fretboard() {
 
-  const [clickedIndex, setClickedIndex] = useState(null);
+  const [clickedNotes, setClickedNotes] = useState([]);
 
+  const onClickedNote = (note) => {
+    console.log(note)
+  }
+  
   const nStrings = 6;
   // 1 as open "fret" + actual number of frets
   const nFrets = 1 + 12;
@@ -42,24 +47,13 @@ export default function Fretboard() {
     return notesSharp.at((notesSharp.indexOf(openNote) + index) % 12)
   }
 
-  const noteStyleInv = "invisible h-4/4 w-6 bg-red-300 rounded-2xl"
-  const noteStyle = "h-4/4 w-6 bg-red-300 rounded-2xl"
-
   const FretNotes = ({openNote}) => {
     return (
       Array.from({length: nFrets}, (_, i) =>
-        <Note key={i} note={i === 0 ? openNote : getNote(i, openNote)}/>
+        <Note key={i} note={i === 0 ? openNote : getNote(i, openNote)}
+          onClick={onClickedNote}
+        />
   ))};
-
-  const Note = ({index, note}) => (
-    <button key={`frb-${note}-${index}`}
-      onClick={() => setClickedIndex(note)}
-      className="h-full w-12 flex justify-center">
-      <div className={note === clickedIndex ? noteStyle : noteStyleInv}>
-      {note}
-      </div>
-    </button>
-  );
 
   return (tunings[tuningCurrent].map((note, i) =>
     // top level container
