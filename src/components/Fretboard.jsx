@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Note from './Note'
 
 export default function Fretboard() {
@@ -6,8 +6,12 @@ export default function Fretboard() {
   const [clickedNotes, setClickedNotes] = useState([]);
 
   const onClickedNote = (note) => {
-    console.log(note)
+    setClickedNotes([...clickedNotes, note])
   }
+
+  useEffect(() => {
+    console.log(clickedNotes);
+  }, [clickedNotes]);
   
   const nStrings = 6;
   // 1 as open "fret" + actual number of frets
@@ -47,32 +51,31 @@ export default function Fretboard() {
     return notesSharp.at((notesSharp.indexOf(openNote) + index) % 12)
   }
 
-  const FretNotes = ({openNote}) => {
-    return (
-      Array.from({length: nFrets}, (_, i) =>
-        <Note key={i} note={i === 0 ? openNote : getNote(i, openNote)}
-          onClick={onClickedNote}
-        />
-  ))};
-
-  return (tunings[tuningCurrent].map((note, i) =>
+  return (tunings[tuningCurrent].map((openNote, stringNumber) =>
     // top level container
-    <div key={i} className="flex h-6">
+    <div key={stringNumber} className="flex h-6">
       {/* fretboad container */}
-      <div key={`fb-${i}`} className="relative flex">
+      <div key={`fb-${stringNumber}`} className="relative flex">
         {/* string element */}
-        <div key={`stc-${i}`} className="
+        <div key={`stc-${stringNumber}`} className="
           absolute inset-0 z-10 left-12
           flex items-center justify-center
         ">
-          <div key={`st-${i}`} className="h-1 w-full
+          <div key={`st-${stringNumber}`} className="h-1 w-full
             bg-gradient-to-br from-[#A8A9AD] via-gray-300 to-gray-500
           ">
           </div>
         </div>
         {frets}
         <div className="h-full absolute z-20 flex">
-          <FretNotes openNote={note}/>
+          { Array.from({length: nFrets}, (_, i) => {
+              const note = i === 0 ? openNote : getNote(i, openNote);
+              return <Note key={i}
+                note={note}
+                clicked={clickedNotes.includes(note)}
+                onClick={onClickedNote}
+              />
+          })}
         </div>
       </div>
     </div>
