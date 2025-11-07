@@ -3,15 +3,21 @@ import Note from './Note'
 
 export default function Fretboard() {
 
-  const [clickedNotes, setClickedNotes] = useState([]);
+  const [clickedFrets, setClickedNotes] = useState({});
 
-  const onClickedNote = (note) => {
-    setClickedNotes([...clickedNotes, note])
+  const onFretClick = (ident, note) => {
+    const fretsClone = {...clickedFrets}
+    if(fretsClone[ident]) {
+      delete fretsClone[ident];
+    } else {
+      fretsClone[ident] = note;
+    }
+    setClickedNotes(fretsClone);
   }
 
   useEffect(() => {
-    console.log(clickedNotes);
-  }, [clickedNotes]);
+    console.log(clickedFrets);
+  }, [clickedFrets]);
   
   const nStrings = 6;
   // 1 as open "fret" + actual number of frets
@@ -62,18 +68,21 @@ export default function Fretboard() {
           flex items-center justify-center
         ">
           <div key={`st-${stringNumber}`} className="h-1 w-full
-            bg-gradient-to-br from-[#A8A9AD] via-gray-300 to-gray-500
+            bg-gradient-to-br from-gray-500 via-gray-300 to-gray-500
           ">
           </div>
         </div>
         {frets}
         <div className="h-full absolute z-20 flex">
           { Array.from({length: nFrets}, (_, i) => {
+              const ident = `${stringNumber}-${i}`; 
               const note = i === 0 ? openNote : getNote(i, openNote);
-              return <Note key={i}
+              return <Note
+                key={i}
                 note={note}
-                clicked={clickedNotes.includes(note)}
-                onClick={onClickedNote}
+                ident={ident}
+                clicked={ident in clickedFrets}
+                onClick={onFretClick}
               />
           })}
         </div>
