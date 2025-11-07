@@ -3,6 +3,18 @@ import Note from './Note'
 
 export default function Fretboard() {
 
+  // it contains sequences of semitones, 0 being the root note.
+  const chords = {
+    "maj": [0, 4, 7],
+    "min": [0, 3, 7],
+  };
+
+  const findMatchingChords = (selectedNotes) => {
+    selectedNotes.forEach((note) => {
+      console.log(getNotesSequence(note));
+     });
+  };
+  
   const [clickedFrets, setClickedNotes] = useState({});
 
   const onFretClick = (ident, note) => {
@@ -13,10 +25,10 @@ export default function Fretboard() {
       fretsClone[ident] = note;
     }
     setClickedNotes(fretsClone);
-  }
+  };
 
   useEffect(() => {
-    console.log(clickedFrets);
+    findMatchingChords(new Set(Object.values(clickedFrets)));
   }, [clickedFrets]);
   
   const nStrings = 6;
@@ -28,23 +40,23 @@ export default function Fretboard() {
 
   const tunings = {
     "standard": ["E", "B", "G", "D", "A", "E"],
-  }
+  };
 
-  const tuningCurrent = "standard"
+  const tuningCurrent = "standard";
   
-  const fretStyleBase = "z-0 w-12 border-solid"
+  const fretStyleBase = "z-0 w-12 border-solid";
 
   const fretStyle = `
     ${fretStyleBase}
     bg-[#E8D4A2]
     border-r-4 border-r-[#D4D4D4]
     border-l-4 border-l-[#C0C0C0]
-  `
+  `;
   const openStyle = `
     ${fretStyleBase}
     bg-[#FFF8DC]
     border-r-4 border-r-[#FFF8DC]
-  `
+  `;
 
   const frets = Array.from({length: nFrets}, (_, i) =>
     <div key={`fr-${i}`}
@@ -55,6 +67,12 @@ export default function Fretboard() {
 
   const getNote = (index, openNote) => {
     return notesSharp.at((notesSharp.indexOf(openNote) + index) % 12)
+  };
+
+  const getNotesSequence = (startNote) => {
+    const index = notesSharp.indexOf(startNote);
+    if(index === -1) return notesSharp;
+    return [...notesSharp.slice(index), ...notesSharp.slice(0, index)];
   }
 
   return (tunings[tuningCurrent].map((openNote, stringNumber) =>
