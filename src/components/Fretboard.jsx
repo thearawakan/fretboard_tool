@@ -3,15 +3,27 @@ import Note from './Note'
 
 export default function Fretboard() {
 
-  // it contains sequences of semitones, 0 being the root note.
-  const chords = {
+  // it contains semitones patterns, 0 being the root note.
+  const chordPatterns = {
     "maj": [0, 4, 7],
     "min": [0, 3, 7],
   };
 
   const findMatchingChords = (selectedNotes) => {
-    selectedNotes.forEach((note) => {
-      console.log(getNotesSequence(note));
+    selectedNotes.forEach((startNote) => {
+      const sequence = getNotesSequence(startNote);
+      const patterns = [];
+      selectedNotes.forEach((note) => {
+        patterns.push(sequence.indexOf(note))
+      })
+      const matches = []
+      for(const [key, val] of Object.entries(chordPatterns)){
+        if(patterns.every(note => val.includes(note))) {
+          matches.push(key);
+        };
+      }
+      console.log(patterns);
+      console.log(matches);
      });
   };
   
