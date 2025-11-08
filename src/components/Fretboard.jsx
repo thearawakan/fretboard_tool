@@ -1,32 +1,10 @@
 import { useState, useEffect } from 'react'
 import Note from './Note'
 
-export default function Fretboard() {
+export default function Fretboard({nStrings, nFrets, tuning, notes, onClick}) {
+  // accounts for the open "fret"
+  const allFrets = nFrets + 1;
 
-  // it contains semitones patterns, 0 being the root note.
-  const chordPatterns = {
-    "maj": new Set([0, 4, 7]),
-    "min": new Set([0, 3, 7]),
-  };
-
-  const findMatchingChords = (selectedNotes) => {
-    const selectedClone = Array.from(new Set(selectedNotes));
-    let strongestMatch = 0;
-    const matches = selectedClone.map((startNote) => {
-      const noteMatches = { [startNote]: [] };
-      const sequence = getNotesSequence(startNote);
-      const patterns = selectedClone.map((note) => sequence.indexOf(note));
-      for(const [chordSignature, chordPattern] of Object.entries(chordPatterns)){
-        const matchStrength = patterns.filter(distance => chordPattern.has(distance)).length
-        noteMatches[startNote].push({[chordSignature]: matchStrength});
-        strongestMatch = Math.max(strongestMatch, matchStrength);
-      }
-      return noteMatches;
-    });
-    console.log(matches);
-    return { strongestMatch, matches };
-  };
-  
   const [clickedFrets, setClickedNotes] = useState({});
 
   const onFretClick = (ident, note) => {
@@ -40,25 +18,10 @@ export default function Fretboard() {
   };
 
   useEffect(() => {
-    const matches = findMatchingChords(Object.values(clickedFrets));
-    console.log(matches);
+    onClick(clickedFrets);
   }, [clickedFrets]);
-  
-  const nStrings = 6;
-  // 1 as open "fret" + actual number of frets
-  const nFrets = 1 + 12;
-  
-  const notesSharp = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
-  // const notesFlat = ['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab']
 
-  const tunings = {
-    "standard": ["E", "B", "G", "D", "A", "E"],
-  };
-
-  const tuningCurrent = "standard";
-  
   const fretStyleBase = "z-0 w-12 border-solid";
-
   const fretStyle = `
     ${fretStyleBase}
     bg-[#E8D4A2]
@@ -71,24 +34,14 @@ export default function Fretboard() {
     border-r-4 border-r-[#FFF8DC]
   `;
 
-  const frets = Array.from({length: nFrets}, (_, i) =>
+  const frets = Array.from({length: allFrets}, (_, i) =>
     <div key={`fr-${i}`}
       className={i > 0 ? fretStyle : openStyle}
     >
     </div>
   );
 
-  const getNote = (index, openNote) => {
-    return notesSharp.at((notesSharp.indexOf(openNote) + index) % 12)
-  };
-
-  const getNotesSequence = (startNote) => {
-    const index = notesSharp.indexOf(startNote);
-    if(index === -1) return notesSharp;
-    return [...notesSharp.slice(index), ...notesSharp.slice(0, index)];
-  }
-
-  return (tunings[tuningCurrent].map((openNote, stringNumber) =>
+  return (tuning.map((openNote, stringNumber) =>
     // top level container
     <div key={stringNumber} className="flex h-6">
       {/* fretboad container */}
@@ -105,9 +58,10 @@ export default function Fretboard() {
         </div>
         {frets}
         <div className="h-full absolute z-20 flex">
-          { Array.from({length: nFrets}, (_, i) => {
+          { Array.from({length: allFrets}, (_, i) => {
               const ident = `${stringNumber}-${i}`; 
-              const note = i === 0 ? openNote : getNote(i, openNote);
+              const note = i === 0 ? openNote
+                : notes.at((notes.indexOf(openNote) + i) % 12); // cycle through 12 available notes
               return <Note
                 key={i}
                 note={note}
