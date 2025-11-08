@@ -5,8 +5,8 @@ export default function Fretboard() {
 
   // it contains semitones patterns, 0 being the root note.
   const chordPatterns = {
-    "maj": [0, 4, 7],
-    "min": [0, 3, 7],
+    "maj": new Set([0, 4, 7]),
+    "min": new Set([0, 3, 7]),
   };
 
   const findMatchingChords = (selectedNotes) => {
@@ -16,14 +16,10 @@ export default function Fretboard() {
       selectedNotes.forEach((note) => {
         patterns.push(sequence.indexOf(note))
       })
-      const matches = []
-      for(const [key, val] of Object.entries(chordPatterns)){
-        if(patterns.every(note => val.includes(note))) {
-          matches.push(key);
-        };
+      for(const [chordSignature, chordPattern] of Object.entries(chordPatterns)){
+        const matches = patterns.filter(distance => chordPattern.has(distance)).length
+        console.log(matches);
       }
-      console.log(patterns);
-      console.log(matches);
      });
   };
   
