@@ -10,17 +10,21 @@ export default function Fretboard() {
   };
 
   const findMatchingChords = (selectedNotes) => {
-    selectedNotes.forEach((startNote) => {
+    const selectedClone = Array.from(new Set(selectedNotes));
+    let strongestMatch = 0;
+    const matches = selectedClone.map((startNote) => {
+      const noteMatches = { [startNote]: [] };
       const sequence = getNotesSequence(startNote);
-      const patterns = [];
-      selectedNotes.forEach((note) => {
-        patterns.push(sequence.indexOf(note))
-      })
+      const patterns = selectedClone.map((note) => sequence.indexOf(note));
       for(const [chordSignature, chordPattern] of Object.entries(chordPatterns)){
-        const matches = patterns.filter(distance => chordPattern.has(distance)).length
-        console.log(matches);
+        const matchStrength = patterns.filter(distance => chordPattern.has(distance)).length
+        noteMatches[startNote].push({[chordSignature]: matchStrength});
+        strongestMatch = Math.max(strongestMatch, matchStrength);
       }
-     });
+      return noteMatches;
+    });
+    console.log(matches);
+    return { strongestMatch, matches };
   };
   
   const [clickedFrets, setClickedNotes] = useState({});
@@ -36,7 +40,8 @@ export default function Fretboard() {
   };
 
   useEffect(() => {
-    findMatchingChords(new Set(Object.values(clickedFrets)));
+    const matches = findMatchingChords(Object.values(clickedFrets));
+    console.log(matches);
   }, [clickedFrets]);
   
   const nStrings = 6;
