@@ -15,8 +15,11 @@ function App() {
     "min": new Set([0, 3, 7]),
   };
 
+  const [chordMatches, setChordMatches] = useState(null);
+
   const clickedNotes = (notes) => {
-    console.log(notes);
+    const matches = findMatchingChords(notes);
+    setChordMatches(matches);
   }
 
   const getNotesSequence = (startNote) => {
@@ -26,32 +29,40 @@ function App() {
   }
 
   const findMatchingChords = (selectedNotes) => {
-    const selectedClone = Array.from(new Set(selectedNotes));
     let strongestMatch = 0;
-    const matches = selectedClone.map((startNote) => {
-      const noteMatches = { [startNote]: [] };
+    const matches = {};
+    const selectedClone = Array.from(new Set(selectedNotes)); // cast into array once
+    selectedClone.forEach((startNote) => {
       const sequence = getNotesSequence(startNote);
       const patterns = selectedClone.map((note) => sequence.indexOf(note));
       for(const [chordSignature, chordPattern] of Object.entries(chordPatterns)){
         const matchStrength = patterns.filter(distance => chordPattern.has(distance)).length
-        noteMatches[startNote].push({[chordSignature]: matchStrength});
+        matches[`${startNote}${chordSignature}`] = matchStrength;
         strongestMatch = Math.max(strongestMatch, matchStrength);
       }
-      return noteMatches;
     });
     return { strongestMatch, matches };
   };
-  
+
   return (
     <>
-      <h1 className="text-3xl font-bold underline">
-        Chords!
-      </h1>
+      <div className='m-3'>
+        <h1 className='text-3xl font-bold underline'>
+          Chords!
+        </h1>
+      </div>
+      <div>
       <Fretboard
         nStrings={6} nFrets={12}
         tuning={availableTunings[tuning]} notes={notesSharp}
         onClick={clickedNotes}
       />
+      { chordMatches && Object.entries(chordMatches.matches)
+        .filter(([_, strength]) => strength >= chordMatches.strongestMatch)
+        .map(([chord, strength]) =>(
+          <p>{chord}</p>
+      ))}
+    </div>
     </>
   )
 }

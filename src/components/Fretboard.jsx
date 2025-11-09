@@ -18,7 +18,7 @@ export default function Fretboard({nStrings, nFrets, tuning, notes, onClick}) {
   };
 
   useEffect(() => {
-    onClick(clickedFrets);
+    onClick(Object.values(clickedFrets));
   }, [clickedFrets]);
 
   const fretStyleBase = "z-0 w-12 border-solid";
