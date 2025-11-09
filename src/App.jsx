@@ -46,23 +46,29 @@ function App() {
 
   return (
     <>
-      <div className='m-3'>
+      <div className='mx-24 mt-16 mb-4'>
         <h1 className='text-3xl font-bold underline'>
           Chords!
         </h1>
       </div>
-      <div>
-      <Fretboard
-        nStrings={6} nFrets={12}
-        tuning={availableTunings[tuning]} notes={notesSharp}
-        onClick={clickedNotes}
-      />
-      { chordMatches && Object.entries(chordMatches.matches)
-        .filter(([_, strength]) => strength >= chordMatches.strongestMatch)
-        .map(([chord, strength]) =>(
-          <p>{chord}</p>
-      ))}
-    </div>
+      <div className='mx-24 mt-2'>
+        <Fretboard
+          nStrings={6} nFrets={12}
+          tuning={availableTunings[tuning]} notes={notesSharp}
+          onClick={clickedNotes}
+        />
+        <div className='flex my-6 gap-1'>
+          { chordMatches && Object.entries(chordMatches.matches)
+            .filter(([_, strength]) => strength >= chordMatches.strongestMatch)
+            .map(([chord, strength]) =>(
+              <div key={chord}
+                className='bg-[#F99D1B] rounded-md p-1'
+              >
+                {chord}
+              </div>
+          ))}
+        </div>
+      </div>
     </>
   )
 }
